@@ -13,6 +13,7 @@ A machine learning project that predicts whether an object detected by sonar sig
 - [Usage](#usage)
 - [Code Walkthrough](#code-walkthrough)
 - [Project Structure](#project-structure)
+- [Requirements](#requirements)
 - [Results](#results)
 - [Future Improvements](#future-improvements)
 - [Contributing](#contributing)
@@ -90,3 +91,135 @@ Clone the repository and install dependencies:
 git clone https://github.com/your-username/sonar-rock-vs-mine.git
 cd sonar-rock-vs-mine
 pip install -r requirements.txt
+```
+
+---
+
+## Usage
+### Running in Google Colab
+1. Open the notebook in Google Colab.  
+2. Upload the dataset file (`Copy of sonar data.csv`).  
+3. Run the notebook cells in order.  
+
+### Running Locally
+1. Ensure Python 3.8+ is installed.  
+2. Place `sonar_data.csv` inside a `data/` folder.  
+3. Run the notebook using Jupyter:
+   ```bash
+   jupyter notebook notebooks/Rock_vs_Mine_prediction.ipynb
+   ```
+
+---
+
+## Code Walkthrough
+
+### Load Dataset
+```python
+import pandas as pd
+sonar_data = pd.read_csv("data/sonar_data.csv", header=None)
+```
+
+### Split Features and Labels
+```python
+X = sonar_data.drop(columns=60, axis=1)
+Y = sonar_data[60]
+```
+
+### Train-Test Split
+```python
+from sklearn.model_selection import train_test_split
+X_train, X_test, Y_train, Y_test = train_test_split(
+    X, Y, test_size=0.1, stratify=Y, random_state=1
+)
+```
+
+### Train Model
+```python
+from sklearn.linear_model import LogisticRegression
+model = LogisticRegression()
+model.fit(X_train, Y_train)
+```
+
+### Evaluate Accuracy
+```python
+from sklearn.metrics import accuracy_score
+train_pred = model.predict(X_train)
+test_pred = model.predict(X_test)
+
+print("Training Accuracy:", accuracy_score(train_pred, Y_train))
+print("Testing Accuracy:", accuracy_score(test_pred, Y_test))
+```
+
+### Predict on New Data
+```python
+import numpy as np
+input_data = (0.02,0.037,...,0.011)  # example 60 values
+input_array = np.asarray(input_data).reshape(1, -1)
+prediction = model.predict(input_array)
+print("Predicted Class:", prediction[0])  # 'R' or 'M'
+```
+
+---
+
+## Project Structure
+```
+├── data/
+│   └── sonar_data.csv
+├── notebooks/
+│   └── Rock_vs_Mine_prediction.ipynb
+├── requirements.txt
+└── README.md
+```
+
+---
+
+## Requirements
+The project dependencies are listed below:
+
+```
+numpy
+pandas
+scikit-learn
+```
+
+If you want exact versions for reproducibility, you can freeze your environment with:
+```bash
+pip freeze > requirements.txt
+```
+
+---
+
+## Results
+- **Training accuracy**: ~83%  
+- **Testing accuracy**: ~76%  
+- The model successfully predicts whether sonar signals correspond to a rock or a mine.
+
+---
+
+## Future Improvements
+- Experiment with other classifiers (SVM, Random Forest, Neural Networks).  
+- Apply feature scaling (StandardScaler, MinMaxScaler).  
+- Perform hyperparameter tuning (GridSearchCV, RandomizedSearchCV).  
+- Implement cross-validation for robust performance estimation.  
+- Deploy the model as a **web app** using Streamlit or Flask.  
+
+---
+
+## Contributing
+Contributions are welcome!  
+If you’d like to improve this project:
+1. Fork the repo  
+2. Create a new branch (`git checkout -b feature-name`)  
+3. Commit changes (`git commit -m 'Add feature'`)  
+4. Push branch (`git push origin feature-name`)  
+5. Create a Pull Request  
+
+---
+
+## License
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
+
+## Author
+- **Garvita Singh**
